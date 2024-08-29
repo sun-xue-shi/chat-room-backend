@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 用户表
 model User {
   id Int @id @default(autoincrement())
   nickName String @db.VarChar(50)
@@ -20,6 +21,35 @@ model User {
   password String @db.VarChar(50)
   email String @db.VarChar(50)
   avatar String @db.VarChar(100) @default("")
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt
+
+  friends FriendShip[] @relation("userToFriend")
+  inverseFriends FriendShip[] @relation("friendToUser")
+}
+
+// 好友关系表
+model FriendShip {
+  user User  @relation("userToFriend",fields: [userId],references: [id])
+  userId Int
+
+  friend User  @relation("friendToUser",fields: [friendId],references: [id])
+  friendId Int
+
+  @@id([friendId,userId])
+}
+
+//好友申请表
+model friendRequest {
+  id Int @id @default(autoincrement())
+  //发送请求者
+  fromUserId Int
+  //待添加好友
+  toFriendId Int
+  //打招呼消息
+  sayHello String @db.VarChar(100)
+  //申请状态 2拒绝 1通过 0请求中
+  status Int
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
 }

@@ -119,4 +119,11 @@ export class UserController {
     });
     return '发送成功';
   }
+
+  //获取好友列表
+  @Get('friend')
+  @RequireLogin()
+  async getFriend(@UserInfo('userId') userId: number) {
+    return await this.userService.getFriends(userId);
+  }
 }
