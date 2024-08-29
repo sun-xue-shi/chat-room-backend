@@ -6,6 +6,7 @@ import { Logger } from '@nestjs/common';
 import { RedisService } from 'src/redis/redis.service';
 import { HttpException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,6 @@ export class UserService {
 
   async register(user: RegisterUserDto) {
     const captcha = await this.redisService.get(`captcha_${user.email}`);
-
-    console.log('ca', captcha, user.captcha);
 
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
@@ -61,5 +60,23 @@ export class UserService {
       this.log.error(error, UserService);
       return null;
     }
+  }
+
+  async login(loginUser: LoginUserDto) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        userName: loginUser.userName,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException('该用户不存在', HttpStatus.BAD_REQUEST);
+    }
+
+    if (user.password !== loginUser.password) {
+      throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
+    }
+
+    return user;
   }
 }
