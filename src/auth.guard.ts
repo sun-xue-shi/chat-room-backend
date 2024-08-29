@@ -8,7 +8,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { JwtUserData } from './types/jwt';
 import { Request, Response } from 'express';
 
 // 登录验证
@@ -39,25 +38,31 @@ export class AuthGuard implements CanActivate {
 
     try {
       const token = authorization.split(' ')[1];
-      const userData = this.jwtService.verify<JwtUserData>(token);
+      const userData = this.jwtService.verify(token);
 
       request.user = {
         userId: userData.userId,
         username: userData.username,
       };
 
-      response.header(
-        'token',
-        this.jwtService.sign(
-          {
-            userId: userData.userId,
-            username: userData.username,
-          },
-          {
-            expiresIn: '7d',
-          },
-        ),
-      );
+      const { exp } = userData; // 过期时间
+      const nowTime = Math.floor(Date.now() / 1000);
+      const refreshTokenTime = exp - nowTime;
+
+      if (refreshTokenTime < 60 * 60 * 24) {
+        response.header(
+          'token',
+          this.jwtService.sign(
+            {
+              userId: userData.userId,
+              username: userData.username,
+            },
+            {
+              expiresIn: '7d',
+            },
+          ),
+        );
+      }
 
       return true;
     } catch {
