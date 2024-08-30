@@ -53,3 +53,21 @@ model friendRequest {
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
 }
+
+
+//聊天室表
+model chatRoom {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
+  type Boolean @default(false) //默认单聊
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt
+}
+
+//用户所在聊天室表
+model user_room {
+  userId Int
+  roomId Int
+
+  @@id([userId,roomId])
+}
