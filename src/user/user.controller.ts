@@ -121,9 +121,12 @@ export class UserController {
   }
 
   //获取好友列表
-  @Get('friend')
+  @Get('list')
   @RequireLogin()
-  async getFriend(@UserInfo('userId') userId: number) {
-    return await this.userService.getFriends(userId);
+  async getFriend(
+    @UserInfo('userId') userId: number,
+    @Query('name') name: string,
+  ) {
+    return await this.userService.getFriends(userId, name);
   }
 }

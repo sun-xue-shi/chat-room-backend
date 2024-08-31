@@ -24,8 +24,11 @@ export class ChatroomController {
   }
 
   @Get('list')
-  async roomList(@UserInfo('userId') userId: number) {
-    return await this.chatroomService.roomList(userId);
+  async roomList(
+    @UserInfo('userId') userId: number,
+    @Query('name') name: string,
+  ) {
+    return await this.chatroomService.roomList(userId, name);
   }
 
   @Get('member')

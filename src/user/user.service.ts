@@ -9,6 +9,7 @@ import { HttpStatus } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/udpate-user.dto';
+import { User } from 'src/types/user';
 
 @Injectable()
 export class UserService {
@@ -177,7 +178,7 @@ export class UserService {
   }
 
   //获取好友列表
-  async getFriends(userId: number) {
+  async getFriends(userId: number, name: string) {
     const friends = await this.prismaService.friendShip.findMany({
       where: {
         OR: [
@@ -216,6 +217,8 @@ export class UserService {
 
       res.push(user);
     }
-    return res;
+    return name
+      ? res.filter((item: User) => item.nickName.includes(name))
+      : res;
   }
 }

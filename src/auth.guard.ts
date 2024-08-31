@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
 
       request.user = {
         userId: userData.userId,
-        username: userData.username,
+        userName: userData.userName,
       };
 
       const { exp } = userData; // 过期时间
@@ -55,7 +55,7 @@ export class AuthGuard implements CanActivate {
           this.jwtService.sign(
             {
               userId: userData.userId,
-              username: userData.username,
+              userName: userData.userName,
             },
             {
               expiresIn: '7d',

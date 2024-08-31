@@ -1,6 +1,6 @@
 export interface JwtUserData {
   userId: number;
-  username: string;
+  userName: string;
 }
 
 declare module 'express' {

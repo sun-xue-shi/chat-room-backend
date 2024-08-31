@@ -58,7 +58,7 @@ export class ChatroomService {
   }
 
   //获取用户所在聊天室
-  async roomList(userId: number) {
+  async roomList(userId: number, name: string) {
     const roomIds = await this.prismaService.user_room.findMany({
       where: {
         userId,
@@ -72,6 +72,9 @@ export class ChatroomService {
       where: {
         id: {
           in: roomIds.map((item) => item.roomId),
+        },
+        name: {
+          contains: name,
         },
       },
       select: {
@@ -99,6 +102,7 @@ export class ChatroomService {
         userId: userIds.map((item) => item.userId),
       });
     }
+
     return res;
   }
 
